@@ -1,0 +1,17 @@
+{
+  "name": "rest-cli",
+  "version": "0.0.0",
+  "description": "A CLI for RESTful web services.",
+  "main": "index.js",
+  "repository": "",
+  "keywords": [
+    "cli",
+    "rest"
+  ],
+  "author": "John Wright <johngeorge.wright@gmail.com>",
+  "license": "BSD",
+  "dependencies": {
+    "restler": "*",
+    "module-index": "*"
+  }
+}
