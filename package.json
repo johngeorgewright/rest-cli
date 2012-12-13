@@ -11,7 +11,8 @@
   "author": "John Wright <johngeorge.wright@gmail.com>",
   "license": "BSD",
   "dependencies": {
-    "restler": "*",
-    "module-index": "*"
+    "commander": "*",
+    "module-index": "*",
+    "restler": "*"
   }
 }
