@@ -4,7 +4,7 @@ var expect = require('chai').expect,
     Crud   = require('../lib/client/Crud'),
     server = require('./server');
 
-describe('cli.Crud', function(){
+describe('client.Crud', function(){
 
   var client, blog;
 
