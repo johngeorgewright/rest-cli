@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "A CLI for RESTful web services.",
   "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
   "repository": "",
   "keywords": [
     "cli",
@@ -10,9 +13,16 @@
   ],
   "author": "John Wright <johngeorge.wright@gmail.com>",
   "license": "BSD",
+  "devDependencies": {
+    "chai": "~1.5.0",
+    "mocha": "~1.8.1",
+    "configurable": "0.0.1",
+    "restify": "~2.2.1",
+    "async": "~0.2.5"
+  },
   "dependencies": {
-    "commander": "*",
-    "module-index": "*",
-    "restler": "*"
+    "module-index": "~3.0.2",
+    "restler": "~2.0.1",
+    "commander": "~1.1.1"
   }
 }
