@@ -24,9 +24,9 @@ describe('client.Crud', function(){
   describe('create()', function(){
 
     it('will POST a record', function(done){
-      client.create(blog).on('complete', function(blog){
-        expect(blog).not.to.be.an('Error');
-        expect(blog).to.deep.equal(blog);
+      client.create(blog).on('complete', function(result){
+        expect(result).not.to.be.an('Error');
+        expect(result).to.deep.equal(util._extend(blog, {id: 1}));
         done();
       });
     });
