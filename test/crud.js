@@ -1,116 +1,111 @@
-var expect = require('chai').expect,
-    async  = require('async'),
+var should = require('chai').should(),
+    sinon  = require('sinon'),
     util   = require('util'),
-    Crud   = require('../lib/client/Crud'),
-    server = require('./server');
+    Crud   = require('../lib/client/Crud');
 
 describe('client.Crud', function(){
 
   var client, blog;
 
-  beforeEach(function(done){
+  beforeEach(function(){
     client = new Crud({
-      baseURL: server.settings.host
+      baseURL: 'http://localhost'
     });
 
     blog = {
       title: 'test blog',
       content: 'test content'
     };
+  });
 
-    server.start(done);
+  describe('path()', function(){
+
+    it('will throw an error when passed an invalid action', function(){
+      var err = function(){
+        client.path('invalid action');
+      };
+      err.should.Throw('Invalid action "invalid action"');
+    });
+
+    it('will return a path when passing just an action', function(){
+      var path;
+      client.defaults.retrieveAll = '/blogs';
+      path = client.path('retrieveAll');
+      path.should.equal('/blogs');
+    });
+
+    it('wil replace any {keys} with values when passed a key/value object as a 2nd parameter', function(){
+      var path;
+      client.defaults.retrieveOne = '/blog/{id}';
+      path = client.path('retrieveOne', {id: 1});
+      path.should.to.equal('/blog/1');
+    });
+
   });
 
   describe('create()', function(){
+    
+    it('will call the #post() method', function(){
+      var path = client.path('create'),
+          data = {title: 'mung'};
 
-    it('will POST a record', function(done){
-      client.create(blog).on('complete', function(result){
-        expect(result).not.to.be.an('Error');
-        expect(result).to.deep.equal(util._extend(blog, {id: 1}));
-        done();
-      });
+      sinon.spy(client, 'post');
+      client.create(data);
+      client
+        .post.calledWithExactly(path, {data: data})
+        .should.be.true;
     });
 
   });
 
   describe('retrieve()', function(){
 
-    it('can get one item', function(done){
-      client.retrieve(1).on('complete', function(result){
-        expect(result).not.to.be.an('Error');
-        expect(result).to.deep.equal(util._extend(blog, {id: 1}));
-        done();
-      });
+    it('will call #get() with the retrieveAll action when no arguments are passed', function(){
+      var path = client.path('retrieveAll');
+      sinon.spy(client, 'get');
+      client.retrieve();
+      client
+        .get.calledWithExactly(path)
+        .should.be.true;
     });
 
-    it('can retrieve all items', function(done){
-      client.retrieve().on('complete', function(result){
-        expect(result).not.to.be.an('Error');
-        expect(result).to.deep.equal({
-          1: util._extend(blog, {id: 1})
-        });
-        done();
-      });
+    it('will call #get() with the retrieveOne action when an argument is passed', function(){
+      var path = client.path('retrieveOne', {id: 1});
+      sinon.spy(client, 'get');
+      client.retrieve(1);
+      client
+        .get.calledWithExactly(path)
+        .should.be.true;
     });
 
   });
 
   describe('update()', function(){
+    
+    it('will call the #put() method', function(){
+      var path = client.path('update', {id: 1}),
+          data = {content: 'content'};
 
-    it('it will update a record successfully', function(done){
-      async.series([
-
-        function(next){
-          client.update(1, {title: 'new title'}).on('complete', function(result){
-            expect(result).not.to.be.an('Error');
-            next();
-          });
-        },
-
-        function(next){
-          client.retrieve(1).on('complete', function(result){
-            expect(result.title).to.equal('new title');
-            next();
-          });
-        }
-
-      ], function(err){
-        expect(err).not.to.exist;
-        done();
-      });
+      sinon.spy(client, 'put');
+      client.update(1, data);
+      client
+        .put.calledWithExactly(path, {data: data})
+        .should.be.true;
     });
 
   });
 
   describe('destroy()', function(){
-
-    it('it will delete a record', function(done){
-      async.series([
-
-        function(next){
-          client.destroy(1).on('complete', function(result, response){
-            expect(response.statusCode).to.equal(204);
-            next();
-          });
-        },
-
-        function(next){
-          client.get(1).on('complete', function(result, response){
-            expect(response.statusCode).to.equal(404);
-            next();
-          });
-        }
-
-      ], function(err){
-        expect(err).not.to.exist;
-        done();
-      });
+    
+    it('will call the #del() method', function(){
+      var path = client.path('destroy', {id: 1});
+      sinon.spy(client, 'del');
+      client.destroy(1);
+      client
+        .del.calledWithExactly(path)
+        .should.be.true;
     });
 
-  });
-
-  afterEach(function(){
-    server.close();
   });
 
 });
